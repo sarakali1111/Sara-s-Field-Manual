@@ -33,3 +33,55 @@
 - [ ]  Try Responder on different hosts
 - [ ]  Look for users with the `PASSWD_NOTREQD` field
 - [ ]  Password spray using previously found passwords
+
+
+
+## Prime Rules[](https://divyeshs-organization-1.gitbook.io/cpts-cheatsheet/methodology/active-directory-methodology#prime-rules)
+
+1. **Enumerate before you exploit.** Every AD box has a specific weak-cred / ACL / delegation path — find it before running exploits.
+    
+2. **BloodHound is your map** — collect early with any working cred, re-collect after every credential gain.
+    
+3. **Password reuse across every user, every service, every box** — highest-ROI move in AD.
+    
+4. **Timing matters** — Kerberos rejects tickets outside the 5-minute skew window. `sudo ntpdate <DC_IP>` before every ticket op.
+    
+5. **Cleanup is mandatory** — every SPN plant, every group add, every RBCD delegation must be reverted for OpSec (and OSCP report quality).
+    
+6. **Responder poisoning is EXAM-BANNED** — only analyse-only `-A` is EXAM-OK for LLMNR observation.
+
+
+
+## The Attack Chain — Canonical Order
+
+AskCopy
+
+```
+Zero creds
+   ↓
+enum4linux-ng / SAMR RID brute / anon LDAP → user list
+   ↓
+kerbrute userenum → valid usernames
+   ↓
+AS-REP roast (no-preauth users) OR spray weak/default passwords OR LAPS (if ExtendedRight) OR anon share cred leak
+   ↓
+FIRST CREDENTIAL
+   ↓
+BloodHound collection (bloodhound-ce-python -c All)
+   ↓
+Description / info field grep, LAPS check, gMSA dump, mailbox reads
+   ↓
+Kerberoast (offline crack) OR ACL abuse (ForceChangePassword / GenericAll)
+   ↓
+BloodHound path to next principal
+   ↓
+Lateral: PtH via nxc smb, PtT via kinit ccache, WinRM (evil-winrm), PsExec (impacket)
+   ↓
+BloodHound recollect — mark every new cred as Owned
+   ↓
+Path to DA revealed (usually via DCSync ExtendedRight → secretsdump)
+   ↓
+DA
+   ↓
+DCSync krbtgt → golden ticket for persistence (mandatory cleanup)
+```

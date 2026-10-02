@@ -10,3 +10,12 @@ Get-ADPrincipalGroupMembership -Identity "Username" | Select-Object Name, GroupC
 ```
 sudo nxc smb manager.htb -u 'guest' -p '' --rid-brute
 ```
+
+## LDAP
+```
+ldapsearch -H ldap://windcorp.htb -b "dc=windcorp,dc=htb" > ldap.out
+```
+
+```
+grep -i samaccountname ldap.out |awk '{print $2}'|sort -u|grep -v \$
+```

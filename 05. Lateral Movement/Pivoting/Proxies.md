@@ -22,7 +22,6 @@ Creating a forward (or "local") SSH tunnel can be done from our attacking box 
 ssh -vvv -D 9050 user@<IP> -i id_rsa
 ```
 If a id_rsa key has been compromised. Instead use password, but authentication is required. Use verbose mode for troubleshooting.
-
 ## SSHuttle
 In Kali Linux is so easy to install it.
 ```
